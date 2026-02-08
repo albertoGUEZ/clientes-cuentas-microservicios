@@ -65,7 +65,7 @@ public class Cliente {
         cuentas.add(cuentaBancaria);
     }
 
-    public Double totalBalance() {
+    public double totalBalance() {
         return cuentas.stream()
                 .mapToDouble(CuentaBancaria::getTotal)
                 .sum();

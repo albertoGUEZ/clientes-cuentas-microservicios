@@ -6,18 +6,18 @@ public final class Dni {
 
     private final String value;
 
-    public Dni(String valor) {
-        if (!isValid(valor)) {
+    public Dni(String value) {
+        if (!isValid(value)) {
             throw new IllegalArgumentException("Formato de DNI inválido: debe ser 8 dígitos + letra");
         }
-        this.value = valor.toUpperCase();
+        this.value = value;
     }
 
-    private static boolean isValid(String valor) {
-        return valor != null && valor.matches("\\d{8}[A-Z]");
+    private static boolean isValid(String value) {
+        return value != null && value.toUpperCase().matches("\\d{8}[A-Z]");
     }
 
-    public String valor() {
+    public String value() {
         return value;
     }
 

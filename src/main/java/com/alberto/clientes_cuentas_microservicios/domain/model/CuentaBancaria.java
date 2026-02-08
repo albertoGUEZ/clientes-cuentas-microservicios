@@ -9,6 +9,7 @@ public class CuentaBancaria {
     private final Dni dniCliente;
     private final TipoCuenta tipoCuenta;
     private Double total;
+    // TODO: Consider using BigDecimal for monetary values to avoid precision issues
 
     public CuentaBancaria(Dni dniCliente, TipoCuenta tipoCuenta, Double total) {
         if (dniCliente == null) throw new IllegalArgumentException("dniCliente no puede ser null");
@@ -54,7 +55,7 @@ public class CuentaBancaria {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof CuentaBancaria cuentaBancaria)) return false;
-        return Objects.equals(id, cuentaBancaria.id);
+        return id != null && id.equals(cuentaBancaria.id);
     }
 
     @Override
