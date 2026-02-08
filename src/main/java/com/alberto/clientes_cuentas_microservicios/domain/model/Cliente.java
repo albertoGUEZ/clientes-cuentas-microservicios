@@ -52,20 +52,20 @@ public class Cliente {
         return List.copyOf(cuentas);
     }
 
-    public boolean esMayorDeEdad() {
+    public boolean isAdult() {
         return Period.between(fechaNacimiento, LocalDate.now()).getYears() >= 18;
     }
 
-    public void agregarCuenta(CuentaBancaria cuenta) {
-        if (!cuenta.getDniCliente().equals(this.dni)) {
+    public void addCuentaBancaria(CuentaBancaria cuentaBancaria) {
+        if (!cuentaBancaria.getDniCliente().equals(this.dni)) {
             throw new IllegalArgumentException(
                     "La cuenta no pertenece a este cliente"
             );
         }
-        cuentas.add(cuenta);
+        cuentas.add(cuentaBancaria);
     }
 
-    public Double obtenerTotalCuentas() {
+    public Double totalBalance() {
         return cuentas.stream()
                 .mapToDouble(CuentaBancaria::getTotal)
                 .sum();

@@ -36,14 +36,14 @@ public class CuentaBancaria {
         return total;
     }
 
-    public void asignarId(Long id) {
+    public void assignId(Long id) {
         if (this.id != null) {
             throw new IllegalStateException("El id ya ha sido asignado");
         }
         this.id = id;
     }
 
-    public void actualizarTotal(Double total) {
+    public void updateTotal(Double total) {
         if (total == null || total < 0) {
             throw new IllegalArgumentException("El valor total no puede ser negativo");
         }

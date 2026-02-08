@@ -4,37 +4,37 @@ import java.util.Objects;
 
 public final class Dni {
 
-    private final String valor;
+    private final String value;
 
     public Dni(String valor) {
-        if (!esValido(valor)) {
+        if (!isValid(valor)) {
             throw new IllegalArgumentException("Formato de DNI inválido: debe ser 8 dígitos + letra");
         }
-        this.valor = valor.toUpperCase();
+        this.value = valor.toUpperCase();
     }
 
-    private static boolean esValido(String valor) {
+    private static boolean isValid(String valor) {
         return valor != null && valor.matches("\\d{8}[A-Z]");
     }
 
     public String valor() {
-        return valor;
+        return value;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Dni dni)) return false;
-        return valor.equals(dni.valor);
+        return value.equals(dni.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(valor);
+        return Objects.hash(value);
     }
 
     @Override
     public String toString() {
-        return valor;
+        return value;
     }
 }
