@@ -4,6 +4,7 @@ import com.alberto.clientes_cuentas_microservicios.application.port.in.CreateCue
 import com.alberto.clientes_cuentas_microservicios.application.port.in.UpdateCuentaBancariaUseCase;
 import com.alberto.clientes_cuentas_microservicios.application.port.out.ClienteRepositoryPort;
 import com.alberto.clientes_cuentas_microservicios.application.port.out.CuentaBancariaRepositoryPort;
+import com.alberto.clientes_cuentas_microservicios.domain.exception.CuentaBancariaNotFoundException;
 import com.alberto.clientes_cuentas_microservicios.domain.factory.ClienteFactory;
 import com.alberto.clientes_cuentas_microservicios.domain.model.Cliente;
 import com.alberto.clientes_cuentas_microservicios.domain.model.CuentaBancaria;
@@ -43,7 +44,7 @@ public class CuentaBancariaService implements CreateCuentaBancariaUseCase, Updat
     public void updateTotal(Long cuentaBancariaId, double newTotal) {
         CuentaBancaria cuenta = cuentaBancariaRepository.findById(cuentaBancariaId)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("Cuenta bancaria no encontrada con ID: " + cuentaBancariaId)
+                        new CuentaBancariaNotFoundException(cuentaBancariaId)
                 );
 
         cuenta.updateTotal(newTotal);

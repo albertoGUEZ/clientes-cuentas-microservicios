@@ -2,6 +2,8 @@ package com.alberto.clientes_cuentas_microservicios.application.service;
 
 import com.alberto.clientes_cuentas_microservicios.application.port.in.ClienteQueryUseCase;
 import com.alberto.clientes_cuentas_microservicios.application.port.out.ClienteRepositoryPort;
+import com.alberto.clientes_cuentas_microservicios.domain.exception.ClienteNotFoundException;
+import com.alberto.clientes_cuentas_microservicios.domain.exception.InvalidDomainException;
 import com.alberto.clientes_cuentas_microservicios.domain.model.Cliente;
 import com.alberto.clientes_cuentas_microservicios.domain.model.Dni;
 
@@ -32,7 +34,7 @@ public class ClienteService implements ClienteQueryUseCase {
     @Override
     public List<Cliente> getAllWithTotalBalanceGreaterThan(double total) {
         if (total < 0) {
-            throw new IllegalArgumentException("El total no puede ser negativo");
+            throw new InvalidDomainException("El total no puede ser negativo");
         }
 
         return clienteRepository.findAll()
@@ -45,6 +47,6 @@ public class ClienteService implements ClienteQueryUseCase {
     @Override
     public Cliente getByDni(Dni dni) {
         return clienteRepository.findByDni(dni)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con DNI: " + dni));
+                .orElseThrow(() -> new ClienteNotFoundException(dni.toString()));
     }
 }

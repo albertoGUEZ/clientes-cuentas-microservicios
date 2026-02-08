@@ -1,5 +1,7 @@
 package com.alberto.clientes_cuentas_microservicios.domain.model;
 
+import com.alberto.clientes_cuentas_microservicios.domain.exception.InvalidDomainException;
+
 import java.util.Objects;
 
 public final class Dni {
@@ -8,7 +10,7 @@ public final class Dni {
 
     public Dni(String value) {
         if (!isValid(value)) {
-            throw new IllegalArgumentException("Formato de DNI inválido: debe ser 8 dígitos + letra");
+            throw new InvalidDomainException("Formato de DNI inválido: debe ser 8 dígitos + letra");
         }
         this.value = value;
     }
