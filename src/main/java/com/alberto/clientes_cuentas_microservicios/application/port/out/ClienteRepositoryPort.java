@@ -10,10 +10,6 @@ public interface ClienteRepositoryPort {
 
     List<Cliente> findAll();
 
-    List<Cliente> findAllAdults();
-
-    List<Cliente> findAllWithTotalAccountGreaterThan(double total);
-
     Optional<Cliente> findByDni(Dni dni);
 
     Cliente save(Cliente cliente);

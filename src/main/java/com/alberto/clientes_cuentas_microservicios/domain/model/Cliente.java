@@ -1,5 +1,7 @@
 package com.alberto.clientes_cuentas_microservicios.domain.model;
 
+import com.alberto.clientes_cuentas_microservicios.domain.exception.InvalidDomainException;
+
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
@@ -15,11 +17,11 @@ public class Cliente {
     private final List<CuentaBancaria> cuentas = new ArrayList<>();
 
     public Cliente(Dni dni, String nombre, String apellido1, String apellido2, LocalDate fechaNacimiento) {
-        if (dni == null) throw new IllegalArgumentException("dni no puede ser null");
+        if (dni == null) throw new InvalidDomainException("dni no puede ser null");
         if (nombre == null || apellido1 == null || apellido2 == null) {
-            throw new IllegalArgumentException("Los nombres y apellidos no pueden ser null");
+            throw new InvalidDomainException("Los nombres y apellidos no pueden ser null");
         }
-        if (fechaNacimiento == null) throw new IllegalArgumentException("fechaNacimiento no puede ser null");
+        if (fechaNacimiento == null) throw new InvalidDomainException("fechaNacimiento no puede ser null");
 
         this.dni = dni;
         this.nombre = nombre;
@@ -52,20 +54,20 @@ public class Cliente {
         return List.copyOf(cuentas);
     }
 
-    public boolean esMayorDeEdad() {
+    public boolean isAdult() {
         return Period.between(fechaNacimiento, LocalDate.now()).getYears() >= 18;
     }
 
-    public void agregarCuenta(CuentaBancaria cuenta) {
-        if (!cuenta.getDniCliente().equals(this.dni)) {
-            throw new IllegalArgumentException(
+    public void addCuentaBancaria(CuentaBancaria cuentaBancaria) {
+        if (!cuentaBancaria.getDniCliente().equals(this.dni)) {
+            throw new InvalidDomainException(
                     "La cuenta no pertenece a este cliente"
             );
         }
-        cuentas.add(cuenta);
+        cuentas.add(cuentaBancaria);
     }
 
-    public Double obtenerTotalCuentas() {
+    public double totalBalance() {
         return cuentas.stream()
                 .mapToDouble(CuentaBancaria::getTotal)
                 .sum();

@@ -1,40 +1,42 @@
 package com.alberto.clientes_cuentas_microservicios.domain.model;
 
+import com.alberto.clientes_cuentas_microservicios.domain.exception.InvalidDomainException;
+
 import java.util.Objects;
 
 public final class Dni {
 
-    private final String valor;
+    private final String value;
 
-    public Dni(String valor) {
-        if (!esValido(valor)) {
-            throw new IllegalArgumentException("Formato de DNI inválido: debe ser 8 dígitos + letra");
+    public Dni(String value) {
+        if (!isValid(value)) {
+            throw new InvalidDomainException("Formato de DNI inválido: debe ser 8 dígitos + letra");
         }
-        this.valor = valor.toUpperCase();
+        this.value = value;
     }
 
-    private static boolean esValido(String valor) {
-        return valor != null && valor.matches("\\d{8}[A-Z]");
+    private static boolean isValid(String value) {
+        return value != null && value.toUpperCase().matches("\\d{8}[A-Z]");
     }
 
-    public String valor() {
-        return valor;
+    public String value() {
+        return value;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Dni dni)) return false;
-        return valor.equals(dni.valor);
+        return value.equals(dni.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(valor);
+        return Objects.hash(value);
     }
 
     @Override
     public String toString() {
-        return valor;
+        return value;
     }
 }
