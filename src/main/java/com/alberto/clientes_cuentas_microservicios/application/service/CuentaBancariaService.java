@@ -10,13 +10,15 @@ import com.alberto.clientes_cuentas_microservicios.domain.model.Cliente;
 import com.alberto.clientes_cuentas_microservicios.domain.model.CuentaBancaria;
 import com.alberto.clientes_cuentas_microservicios.domain.model.Dni;
 import com.alberto.clientes_cuentas_microservicios.domain.model.TipoCuenta;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CuentaBancariaService implements CreateCuentaBancariaUseCase, UpdateCuentaBancariaUseCase {
 
     private final ClienteRepositoryPort clienteRepository;
     private final CuentaBancariaRepositoryPort cuentaBancariaRepository;
 
-    public CuentaBancariaService(ClienteRepositoryPort clienteRepository, CuentaBancariaRepositoryPort cuentaBancariaRepository, ClienteFactory clienteFactory) {
+    public CuentaBancariaService(ClienteRepositoryPort clienteRepository, CuentaBancariaRepositoryPort cuentaBancariaRepository) {
         this.clienteRepository = clienteRepository;
         this.cuentaBancariaRepository = cuentaBancariaRepository;
     }

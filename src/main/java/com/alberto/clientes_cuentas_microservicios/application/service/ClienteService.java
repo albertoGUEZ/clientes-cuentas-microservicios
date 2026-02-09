@@ -6,9 +6,11 @@ import com.alberto.clientes_cuentas_microservicios.domain.exception.ClienteNotFo
 import com.alberto.clientes_cuentas_microservicios.domain.exception.InvalidDomainException;
 import com.alberto.clientes_cuentas_microservicios.domain.model.Cliente;
 import com.alberto.clientes_cuentas_microservicios.domain.model.Dni;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ClienteService implements ClienteQueryUseCase {
 
     private final ClienteRepositoryPort clienteRepository;
