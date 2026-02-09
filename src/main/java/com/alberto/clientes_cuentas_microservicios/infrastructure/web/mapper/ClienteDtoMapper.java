@@ -6,12 +6,14 @@ import com.alberto.clientes_cuentas_microservicios.domain.model.Dni;
 import com.alberto.clientes_cuentas_microservicios.infrastructure.web.dto.ClienteResponse;
 import com.alberto.clientes_cuentas_microservicios.infrastructure.web.dto.CuentaBancariaResponse;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ClienteDtoMapper {
 
+    @Mapping(source = "dni", target = "dni")
     ClienteResponse toResponse(Cliente cliente);
 
     CuentaBancariaResponse toCuentaResponse(CuentaBancaria cuenta);

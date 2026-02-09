@@ -52,4 +52,47 @@ class ClienteServiceTest {
         assertThatThrownBy(() -> clienteService.getByDni(dni))
                 .isInstanceOf(ClienteNotFoundException.class);
     }
+
+    @Test
+    void shouldReturnOnlyAdultClientes() {
+        Cliente adulto1 = new Cliente(new Dni("11111111A"), "Juan", "Pérez", "García", LocalDate.of(1990, 1, 1));
+        Cliente adulto2 = new Cliente(new Dni("22222222B"), "Ana", "López", "Martín", LocalDate.of(1985, 5, 15));
+        Cliente menor = new Cliente(new Dni("33333333C"), "Pedro", "Sánchez", "Ruiz", LocalDate.of(2010, 8, 20));
+
+        List<Cliente> allClientes = List.of(adulto1, adulto2, menor);
+        when(clienteRepository.findAll()).thenReturn(allClientes);
+
+        List<Cliente> result = clienteService.getAllAdults();
+
+        assertThat(result).hasSize(2);
+        assertThat(result).extracting(cliente -> cliente.getDni().value())
+                .containsExactly("11111111A", "22222222B");
+        assertThat(result).allMatch(Cliente::isAdult);
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenNoAdults() {
+        Cliente menor1 = new Cliente(new Dni("11111111A"), "Pedro", "Sánchez", "Ruiz", LocalDate.of(2010, 1, 1));
+        Cliente menor2 = new Cliente(new Dni("22222222B"), "Luis", "García", "Martín", LocalDate.of(2015, 5, 15));
+
+        when(clienteRepository.findAll()).thenReturn(List.of(menor1, menor2));
+
+        List<Cliente> result = clienteService.getAllAdults();
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void shouldReturnAllClientesWhenAllAreAdults() {
+        Cliente adulto1 = new Cliente(new Dni("11111111A"), "Juan", "Pérez", "García", LocalDate.of(1990, 1, 1));
+        Cliente adulto2 = new Cliente(new Dni("22222222B"), "Ana", "López", "Martín", LocalDate.of(1985, 5, 15));
+
+        List<Cliente> allClientes = List.of(adulto1, adulto2);
+        when(clienteRepository.findAll()).thenReturn(allClientes);
+
+        List<Cliente> result = clienteService.getAllAdults();
+
+        assertThat(result).hasSize(2);
+        assertThat(result).containsExactlyElementsOf(allClientes);
+    }
 }

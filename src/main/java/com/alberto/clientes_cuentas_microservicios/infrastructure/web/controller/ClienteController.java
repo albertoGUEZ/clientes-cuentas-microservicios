@@ -19,7 +19,13 @@ public class ClienteController {
     private final ClienteDtoMapper clienteDtoMapper;
 
      @GetMapping
-    public List<ClienteResponse> getAllClientes() {
+    public List<ClienteResponse> getClientes() {
          return clienteDtoMapper.toResponseList(clienteQueryUseCase.getAll());
      }
+
+    @GetMapping("/mayores-de-edad")
+    public List<ClienteResponse> getClientesMayoresDeEdad() {
+        return clienteDtoMapper.toResponseList(clienteQueryUseCase.getAllAdults());
+    }
+
 }
