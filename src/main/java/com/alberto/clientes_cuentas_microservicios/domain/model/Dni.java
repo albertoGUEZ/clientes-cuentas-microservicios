@@ -23,6 +23,10 @@ public final class Dni {
         return value;
     }
 
+    public String getValue() {
+        return value;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

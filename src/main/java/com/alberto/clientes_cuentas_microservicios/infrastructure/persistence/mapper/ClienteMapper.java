@@ -12,20 +12,18 @@ import java.util.List;
 public interface ClienteMapper {
 
     @Mapping(target = "dni", source = "dni")
-    Cliente toClient(ClienteEntity clienteEntity);
+    Cliente toClient(ClienteEntity entity);
 
     @Mapping(target = "dni", source = "dni")
     ClienteEntity toClienteEntity(Cliente cliente);
 
     default String map(Dni dni) {
-        return dni != null ? dni.value() : null;
+        return dni.value();
     }
 
-    default Dni map(String value) {
-        return value != null ? new Dni(value) : null;
+    default Dni map(String dni) {
+        return new Dni(dni);
     }
 
-    List<Cliente> toClienteList(List<ClienteEntity> clienteEntities);
-
-    List<ClienteEntity> toClienteEntityList(List<Cliente> clientes);
+    List<Cliente> toClienteList(List<ClienteEntity> entities);
 }

@@ -3,29 +3,39 @@ package com.alberto.clientes_cuentas_microservicios.infrastructure.persistence.m
 import com.alberto.clientes_cuentas_microservicios.domain.model.CuentaBancaria;
 import com.alberto.clientes_cuentas_microservicios.domain.model.Dni;
 import com.alberto.clientes_cuentas_microservicios.infrastructure.persistence.entity.CuentaBancariaEntity;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
-
-import java.util.List;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface CuentaBancariaMapper {
 
-    default CuentaBancaria toCuentaBancaria(CuentaBancariaEntity entity) {
-        if (entity == null) return null;
-        Dni dniCliente = entity.getDniCliente() != null
-                ? new Dni(entity.getDniCliente())
-                : null;
-
-        return new CuentaBancaria(dniCliente, entity.getTipoCuenta(), entity.getTotal());
+    default String map(Dni dni) {
+        return dni != null ? dni.value() : null;
     }
 
-    default CuentaBancariaEntity toCuentaBancariaEntity(CuentaBancaria cuenta) {
-        if (cuenta == null) return null;
+    default Dni map(String value) {
+        return value != null ? new Dni(value) : null;
+    }
 
-        CuentaBancariaEntity entity = new CuentaBancariaEntity();
-        entity.setDniCliente(cuenta.getDniCliente().value()); // <-- usar getDniCliente()
-        entity.setTipoCuenta(cuenta.getTipoCuenta());
-        entity.setTotal(cuenta.getTotal());
-        return entity;
+    CuentaBancariaEntity toCuentaBancariaEntity(CuentaBancaria cuenta);
+
+    @AfterMapping
+    default void setIdEntity(@MappingTarget CuentaBancariaEntity entity, CuentaBancaria cuenta) {
+        if (cuenta != null) {
+            entity.setId(cuenta.getId());
+        }
+    }
+
+    CuentaBancaria toCuentaBancaria(CuentaBancariaEntity entity);
+
+    @AfterMapping
+    default void setId(@MappingTarget CuentaBancaria cuenta, CuentaBancariaEntity entity) {
+        if (entity != null && entity.getId() != null) {
+            cuenta.assignId(entity.getId());
+        }
     }
 }
+
+
+
