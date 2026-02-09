@@ -1,6 +1,7 @@
 package com.alberto.clientes_cuentas_microservicios.infrastructure.web.controller;
 
 import com.alberto.clientes_cuentas_microservicios.application.port.in.ClienteQueryUseCase;
+import com.alberto.clientes_cuentas_microservicios.domain.model.Dni;
 import com.alberto.clientes_cuentas_microservicios.infrastructure.web.dto.ClienteResponse;
 import com.alberto.clientes_cuentas_microservicios.infrastructure.web.mapper.ClienteDtoMapper;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,13 @@ public class ClienteController {
     public List<ClienteResponse> getClientesConCuentaSuperiorA(@PathVariable double cantidad) {
         return clienteDtoMapper.toResponseList(
                 clienteQueryUseCase.getAllWithTotalBalanceGreaterThan(cantidad)
+        );
+    }
+
+    @GetMapping("/{dni}")
+    public ClienteResponse getClientesPorDni(@PathVariable String dni) {
+        return clienteDtoMapper.toResponse(
+                clienteQueryUseCase.getByDni(new Dni(dni))
         );
     }
 }

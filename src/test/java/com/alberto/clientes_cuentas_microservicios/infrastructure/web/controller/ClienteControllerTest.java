@@ -97,4 +97,28 @@ class ClienteControllerTest {
                     }
                 });
     }
+
+    @Test
+    void shouldReturnClienteByDni() throws Exception {
+        String dni = "11111111A";
+
+        mockMvc.perform(get("/clientes/{dni}", dni))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.dni").value(dni))
+                .andExpect(jsonPath("$.nombre").isString())
+                .andExpect(jsonPath("$.apellido1").isString())
+                .andExpect(jsonPath("$.apellido2").isString())
+                .andExpect(jsonPath("$.fechaNacimiento").isString())
+                .andExpect(jsonPath("$.cuentas").isArray());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenClienteDoesNotExist() throws Exception {
+        String dniInexistente = "99999999Z";
+
+        mockMvc.perform(get("/clientes/{dni}", dniInexistente))
+                .andExpect(status().isNotFound());
+    }
+
 }

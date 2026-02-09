@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -158,6 +159,25 @@ class ClienteServiceTest {
 
         assertThat(result).hasSize(2);
         assertThat(result).containsExactlyElementsOf(allClientes);
+    }
+
+    @Test
+    void shouldReturnClienteWhenFoundByDni() {
+        Dni dni = new Dni("12345678A");
+        Cliente expectedCliente = new Cliente(dni, "Juan", "Pérez", "García", LocalDate.of(1990, 1, 1));
+
+        when(clienteRepository.findByDni(dni)).thenReturn(Optional.of(expectedCliente));
+
+        Cliente result = clienteService.getByDni(dni);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getDni()).isEqualTo(dni);
+        assertThat(result.getNombre()).isEqualTo("Juan");
+        assertThat(result.getApellido1()).isEqualTo("Pérez");
+        assertThat(result.getApellido2()).isEqualTo("García");
+        assertThat(result.getFechaNacimiento()).isEqualTo(LocalDate.of(1990, 1, 1));
+
+        verify(clienteRepository).findByDni(dni);
     }
 
 }
