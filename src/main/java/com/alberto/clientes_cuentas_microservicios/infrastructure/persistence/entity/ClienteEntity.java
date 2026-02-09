@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "clientes")
@@ -22,7 +20,4 @@ public class ClienteEntity {
     private String apellido1;
     private String apellido2;
     private LocalDate fechaNacimiento;
-
-    @Transient
-    private java.util.List<CuentaBancariaEntity> cuentas;
 }
