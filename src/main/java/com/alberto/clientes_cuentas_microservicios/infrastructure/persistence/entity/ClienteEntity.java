@@ -23,6 +23,6 @@ public class ClienteEntity {
     private String apellido2;
     private LocalDate fechaNacimiento;
 
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CuentaBancariaEntity> cuentas = new ArrayList<>();
+    @Transient
+    private java.util.List<CuentaBancariaEntity> cuentas;
 }

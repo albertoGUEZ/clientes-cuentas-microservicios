@@ -18,4 +18,8 @@ public final class ClienteFactory {
                 LocalDate.now()
         );
     }
+
+    public static Cliente createWithAllData(Dni dni, String nombre, String apellido1, String apellido2, LocalDate fechaNacimiento) {
+        return new Cliente(dni, nombre, apellido1, apellido2, fechaNacimiento);
+    }
 }

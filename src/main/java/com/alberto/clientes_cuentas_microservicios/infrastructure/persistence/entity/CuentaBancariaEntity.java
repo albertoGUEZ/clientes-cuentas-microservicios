@@ -16,12 +16,12 @@ public class CuentaBancariaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "dni_cliente", nullable = false)
+    private String dniCliente;
+
     @Enumerated(EnumType.STRING)
     private TipoCuenta tipoCuenta;
 
     private Double total;
 
-    @ManyToOne
-    @JoinColumn(name = "dni_cliente", nullable = false)
-    private ClienteEntity cliente;
 }
