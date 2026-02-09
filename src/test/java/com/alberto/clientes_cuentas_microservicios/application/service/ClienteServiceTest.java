@@ -2,8 +2,11 @@ package com.alberto.clientes_cuentas_microservicios.application.service;
 
 import com.alberto.clientes_cuentas_microservicios.application.port.out.ClienteRepositoryPort;
 import com.alberto.clientes_cuentas_microservicios.domain.exception.ClienteNotFoundException;
+import com.alberto.clientes_cuentas_microservicios.domain.exception.InvalidDomainException;
 import com.alberto.clientes_cuentas_microservicios.domain.model.Cliente;
+import com.alberto.clientes_cuentas_microservicios.domain.model.CuentaBancaria;
 import com.alberto.clientes_cuentas_microservicios.domain.model.Dni;
+import com.alberto.clientes_cuentas_microservicios.domain.model.TipoCuenta;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -95,4 +98,66 @@ class ClienteServiceTest {
         assertThat(result).hasSize(2);
         assertThat(result).containsExactlyElementsOf(allClientes);
     }
+
+    @Test
+    void shouldReturnClientesWithTotalBalanceGreaterThan() {
+        Cliente clienteRico = new Cliente(new Dni("11111111A"), "Juan", "Pérez", "García", LocalDate.of(1990, 1, 1));
+        Cliente clientePobre = new Cliente(new Dni("22222222B"), "Ana", "López", "Martín", LocalDate.of(1985, 5, 15));
+
+        CuentaBancaria cuentaRica = new CuentaBancaria(new Dni("11111111A"), TipoCuenta.NORMAL, 1500.0);
+        CuentaBancaria cuentaPobre = new CuentaBancaria(new Dni("22222222B"), TipoCuenta.NORMAL, 500.0);
+
+        clienteRico.addCuentaBancaria(cuentaRica);
+        clientePobre.addCuentaBancaria(cuentaPobre);
+
+        List<Cliente> allClientes = List.of(clienteRico, clientePobre);
+        when(clienteRepository.findAll()).thenReturn(allClientes);
+
+        List<Cliente> result = clienteService.getAllWithTotalBalanceGreaterThan(1000.0);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getDni().value()).isEqualTo("11111111A");
+        assertThat(result).allMatch(cliente -> cliente.totalBalance() > 1000.0);
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenNoClientesMeetBalanceThreshold() {
+        Cliente cliente1 = new Cliente(new Dni("11111111A"), "Juan", "Pérez", "García", LocalDate.of(1990, 1, 1));
+        Cliente cliente2 = new Cliente(new Dni("22222222B"), "Ana", "López", "Martín", LocalDate.of(1985, 5, 15));
+
+        List<Cliente> allClientes = List.of(cliente1, cliente2);
+        when(clienteRepository.findAll()).thenReturn(allClientes);
+
+        List<Cliente> result = clienteService.getAllWithTotalBalanceGreaterThan(10000.0);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void shouldThrowExceptionWhenTotalIsNegative() {
+        assertThatThrownBy(() -> clienteService.getAllWithTotalBalanceGreaterThan(-100.0))
+                .isInstanceOf(InvalidDomainException.class)
+                .hasMessage("El total no puede ser negativo");
+    }
+
+    @Test
+    void shouldReturnAllClientesWhenAllMeetBalanceThreshold() {
+        Cliente cliente1 = new Cliente(new Dni("11111111A"), "Juan", "Pérez", "García", LocalDate.of(1990, 1, 1));
+        Cliente cliente2 = new Cliente(new Dni("22222222B"), "Ana", "López", "Martín", LocalDate.of(1985, 5, 15));
+
+        CuentaBancaria cuenta1 = new CuentaBancaria(new Dni("11111111A"), TipoCuenta.NORMAL, 100.0);
+        CuentaBancaria cuenta2 = new CuentaBancaria(new Dni("22222222B"), TipoCuenta.NORMAL, 200.0);
+
+        cliente1.addCuentaBancaria(cuenta1);
+        cliente2.addCuentaBancaria(cuenta2);
+
+        List<Cliente> allClientes = List.of(cliente1, cliente2);
+        when(clienteRepository.findAll()).thenReturn(allClientes);
+
+        List<Cliente> result = clienteService.getAllWithTotalBalanceGreaterThan(0.0);
+
+        assertThat(result).hasSize(2);
+        assertThat(result).containsExactlyElementsOf(allClientes);
+    }
+
 }

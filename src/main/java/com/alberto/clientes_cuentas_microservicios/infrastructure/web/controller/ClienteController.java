@@ -5,6 +5,7 @@ import com.alberto.clientes_cuentas_microservicios.infrastructure.web.dto.Client
 import com.alberto.clientes_cuentas_microservicios.infrastructure.web.mapper.ClienteDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,4 +29,10 @@ public class ClienteController {
         return clienteDtoMapper.toResponseList(clienteQueryUseCase.getAllAdults());
     }
 
+    @GetMapping("/con-cuenta-superior-a/{cantidad}")
+    public List<ClienteResponse> getClientesConCuentaSuperiorA(@PathVariable double cantidad) {
+        return clienteDtoMapper.toResponseList(
+                clienteQueryUseCase.getAllWithTotalBalanceGreaterThan(cantidad)
+        );
+    }
 }

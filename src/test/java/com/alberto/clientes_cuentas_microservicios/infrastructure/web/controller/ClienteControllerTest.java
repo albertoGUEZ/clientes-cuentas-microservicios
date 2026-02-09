@@ -1,18 +1,16 @@
 package com.alberto.clientes_cuentas_microservicios.infrastructure.web.controller;
 
 import com.alberto.clientes_cuentas_microservicios.infrastructure.web.dto.ClienteResponse;
+import com.alberto.clientes_cuentas_microservicios.infrastructure.web.dto.CuentaBancariaResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.hasItems;
@@ -68,5 +66,31 @@ class ClienteControllerTest {
     }
 
 
+    @Test
+    void shouldReturnClientesWithAccountBalanceGreaterThan() throws Exception {
+        mockMvc.perform(get("/clientes/con-cuenta-superior-a/1000"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].dni").isString())
+                .andExpect(jsonPath("$[0].cuentas").exists())
+                .andExpect(result -> {
+                    String jsonResponse = result.getResponse().getContentAsString();
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.registerModule(new JavaTimeModule());
 
+                    ClienteResponse[] clientes = mapper.readValue(jsonResponse, ClienteResponse[].class);
+
+                    for (ClienteResponse cliente : clientes) {
+                        double totalBalance = cliente.getCuentas().stream()
+                                .mapToDouble(CuentaBancariaResponse::getTotal)
+                                .sum();
+
+                        assertThat(totalBalance)
+                                .isGreaterThan(1000.0)
+                                .withFailMessage("Cliente %s tiene balance %.2f, debe ser > 1000",
+                                        cliente.getDni(), totalBalance);
+                    }
+                });
+    }
 }
