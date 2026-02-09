@@ -24,7 +24,7 @@ public class CuentaBancariaService implements CreateCuentaBancariaUseCase, Updat
     }
 
     @Override
-    public void createCuentaBancaria(Dni dni, TipoCuenta tipoCuenta, double total) {
+    public CuentaBancaria createCuentaBancaria(Dni dni, TipoCuenta tipoCuenta, double total) {
 
         // Business requirement: if the client does not exist, it must be created automatically
         Cliente cliente = clienteRepository.findByDni(dni)
@@ -38,8 +38,9 @@ public class CuentaBancariaService implements CreateCuentaBancariaUseCase, Updat
                 total
         );
         cliente.addCuentaBancaria(cuenta);
-        cuentaBancariaRepository.save(cuenta);
-        clienteRepository.save(cliente);
+
+
+        return cuentaBancariaRepository.save(cuenta);
     }
 
     @Override
