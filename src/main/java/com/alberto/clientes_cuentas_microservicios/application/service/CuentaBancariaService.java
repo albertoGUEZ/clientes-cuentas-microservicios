@@ -44,14 +44,13 @@ public class CuentaBancariaService implements CreateCuentaBancariaUseCase, Updat
     }
 
     @Override
-    public void updateTotal(Long cuentaBancariaId, double newTotal) {
+    public CuentaBancaria updateTotal(Long cuentaBancariaId, double newTotal) {
         CuentaBancaria cuenta = cuentaBancariaRepository.findById(cuentaBancariaId)
                 .orElseThrow(() ->
                         new CuentaBancariaNotFoundException(cuentaBancariaId)
                 );
 
         cuenta.updateTotal(newTotal);
-        cuentaBancariaRepository.save(cuenta);
-
+        return cuentaBancariaRepository.save(cuenta);
     }
 }

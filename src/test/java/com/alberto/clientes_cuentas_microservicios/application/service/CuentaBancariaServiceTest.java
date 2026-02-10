@@ -2,6 +2,7 @@ package com.alberto.clientes_cuentas_microservicios.application.service;
 
 import com.alberto.clientes_cuentas_microservicios.application.port.out.ClienteRepositoryPort;
 import com.alberto.clientes_cuentas_microservicios.application.port.out.CuentaBancariaRepositoryPort;
+import com.alberto.clientes_cuentas_microservicios.domain.exception.CuentaBancariaNotFoundException;
 import com.alberto.clientes_cuentas_microservicios.domain.model.Cliente;
 import com.alberto.clientes_cuentas_microservicios.domain.model.CuentaBancaria;
 import com.alberto.clientes_cuentas_microservicios.domain.model.Dni;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
@@ -91,5 +93,38 @@ class CuentaBancariaServiceTest {
         verify(clienteRepository).findByDni(dni);
         verify(clienteRepository).save(argThat(cliente -> cliente.getDni().equals(dni)));
         verify(cuentaBancariaRepository).save(any(CuentaBancaria.class));
+    }
+
+    @Test
+    void shouldUpdateTotalWhenCuentaExists() {
+        Long cuentaId = 1L;
+        double nuevoTotal = 2500.0;
+        Dni dni = new Dni("12345678A");
+
+        CuentaBancaria cuentaExistente = new CuentaBancaria(dni, TipoCuenta.NORMAL, 1000.0);
+        cuentaExistente.assignId(cuentaId);
+
+        when(cuentaBancariaRepository.findById(cuentaId)).thenReturn(Optional.of(cuentaExistente));
+
+        cuentaBancariaService.updateTotal(cuentaId, nuevoTotal);
+
+        assertThat(cuentaExistente.getTotal()).isEqualTo(nuevoTotal);
+
+        verify(cuentaBancariaRepository).findById(cuentaId);
+        verify(cuentaBancariaRepository).save(cuentaExistente);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenUpdatingNonExistentCuenta() {
+        Long cuentaId = 999L;
+        double nuevoTotal = 2500.0;
+
+        when(cuentaBancariaRepository.findById(cuentaId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> cuentaBancariaService.updateTotal(cuentaId, nuevoTotal))
+                .isInstanceOf(CuentaBancariaNotFoundException.class);
+
+        verify(cuentaBancariaRepository).findById(cuentaId);
+        verify(cuentaBancariaRepository, never()).save(any());
     }
 }
