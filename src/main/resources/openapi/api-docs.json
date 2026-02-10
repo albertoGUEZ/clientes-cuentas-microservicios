@@ -1,0 +1,280 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/cuentas/{id}": {
+      "put": {
+        "tags": [
+          "cuenta-bancaria-controller"
+        ],
+        "operationId": "updateCuentaBancaria",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCuentaBancariaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CuentaBancariaResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cuentas": {
+      "post": {
+        "tags": [
+          "cuenta-bancaria-controller"
+        ],
+        "operationId": "createCuentaBancaria",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCuentaBancariaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CuentaBancariaResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clientes": {
+      "get": {
+        "tags": [
+          "cliente-controller"
+        ],
+        "operationId": "getClientes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClienteResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clientes/{dni}": {
+      "get": {
+        "tags": [
+          "cliente-controller"
+        ],
+        "operationId": "getClientesPorDni",
+        "parameters": [
+          {
+            "name": "dni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clientes/mayores-de-edad": {
+      "get": {
+        "tags": [
+          "cliente-controller"
+        ],
+        "operationId": "getClientesMayoresDeEdad",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClienteResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clientes/con-cuenta-superior-a/{cantidad}": {
+      "get": {
+        "tags": [
+          "cliente-controller"
+        ],
+        "operationId": "getClientesConCuentaSuperiorA",
+        "parameters": [
+          {
+            "name": "cantidad",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClienteResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UpdateCuentaBancariaRequest": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "CuentaBancariaResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "dniCliente": {
+            "type": "string"
+          },
+          "tipoCuenta": {
+            "type": "string",
+            "enum": [
+              "JUNIOR",
+              "NORMAL",
+              "PREMIUM"
+            ]
+          },
+          "total": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "CreateCuentaBancariaRequest": {
+        "type": "object",
+        "properties": {
+          "dniCliente": {
+            "type": "string"
+          },
+          "tipoCuenta": {
+            "type": "string",
+            "enum": [
+              "JUNIOR",
+              "NORMAL",
+              "PREMIUM"
+            ]
+          },
+          "total": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ClienteResponse": {
+        "type": "object",
+        "properties": {
+          "dni": {
+            "type": "string"
+          },
+          "nombre": {
+            "type": "string"
+          },
+          "apellido1": {
+            "type": "string"
+          },
+          "apellido2": {
+            "type": "string"
+          },
+          "fechaNacimiento": {
+            "type": "string",
+            "format": "date"
+          },
+          "cuentas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CuentaBancariaResponse"
+            }
+          }
+        }
+      }
+    }
+  }
+}
