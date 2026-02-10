@@ -1,6 +1,8 @@
 package com.alberto.clientes_cuentas_microservicios.application.port.in;
 
+import com.alberto.clientes_cuentas_microservicios.domain.model.CuentaBancaria;
+
 public interface UpdateCuentaBancariaUseCase {
 
-    void updateTotal(Long cuentaBancariaId, double total);
+    CuentaBancaria updateTotal(Long cuentaBancariaId, double total);
 }

@@ -1,14 +1,15 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: "API Documentation"
   description: "API documentation for clientes-cuentas-microservicios"
   version: "1.0.0"
 servers:
-  - url: "http://localhost:8080/api"
+  - url: "http://localhost:8080"
 paths:
   /clientes:
     get:
       summary: "Obtener todos los clientes con sus cuentas bancarias"
+      operationId: getClientes
       responses:
         '200':
           description: "Lista de todos los clientes"
@@ -17,33 +18,30 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Cliente'
-              example:
-                - dni: "11111111A"
-                  nombre: "Alberto"
-                  apellido1: "Rodríguez"
-                  apellido2: "Rodríguez"
-                  fechaNacimiento: "1959-09-12"
-                  cuentas:
-                    - id: 1
-                      dniCliente: "11111111A"
-                      tipoCuenta: "NORMAL"
-                      total: 50000.0
-                - dni: "22222222B"
-                  nombre: "María"
-                  apellido1: "García"
-                  apellido2: "López"
-                  fechaNacimiento: "2010-05-20"
-                  cuentas:
-                    - id: 2
-                      dniCliente: "22222222B"
-                      tipoCuenta: "JUNIOR"
-                      total: 150000.0
-        '500':
-          description: "Error interno del servidor"
+                  $ref: '#/components/schemas/ClienteResponse'
+
+  /clientes/{dni}:
+    get:
+      summary: "Obtener cliente por DNI"
+      operationId: getClientesPorDni
+      parameters:
+        - name: dni
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Cliente encontrado"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClienteResponse'
+
   /clientes/mayores-de-edad:
     get:
-      summary: "Obtener todos los clientes mayores de 18 años"
+      summary: "Obtener todos los clientes mayores de edad"
+      operationId: getClientesMayoresDeEdad
       responses:
         '200':
           description: "Lista de clientes mayores de edad"
@@ -52,32 +50,19 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Cliente'
-              example:
-                - dni: "11111111A"
-                  nombre: "Alberto"
-                  apellido1: "Rodríguez"
-                  apellido2: "Rodríguez"
-                  fechaNacimiento: "1959-09-12"
-                  cuentas:
-                    - id: 1
-                      dniCliente: "11111111A"
-                      tipoCuenta: "NORMAL"
-                      total: 50000.0
-        '500':
-          description: "Error interno del servidor"
+                  $ref: '#/components/schemas/ClienteResponse'
+
   /clientes/con-cuenta-superior-a/{cantidad}:
     get:
       summary: "Obtener clientes con cuentas que superan cierta cantidad"
+      operationId: getClientesConCuentaSuperiorA
       parameters:
         - name: cantidad
           in: path
           required: true
-          description: "Monto mínimo total de las cuentas del cliente"
           schema:
             type: number
             format: double
-            minimum: 0
       responses:
         '200':
           description: "Lista de clientes que cumplen el criterio"
@@ -86,191 +71,114 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Cliente'
-              example:
-                - dni: "22222222B"
-                  nombre: "María"
-                  apellido1: "García"
-                  apellido2: "López"
-                  fechaNacimiento: "2010-05-20"
-                  cuentas:
-                    - id: 2
-                      dniCliente: "22222222B"
-                      tipoCuenta: "JUNIOR"
-                      total: 150000.0
-        '400':
-            description: "Cantidad inválida. Debe ser un número positivo."
-        '500':
-          description: "Error interno del servidor"
+                  $ref: '#/components/schemas/ClienteResponse'
+
   /cuentas:
     post:
-      summary: "Dar de alta una nueva cuenta bancaria"
-      description: "Crea una nueva cuenta bancaria. Si el cliente existe, se asocia la cuenta: si no, se crea el cliente automáticamente."
+      summary: "Crear una nueva cuenta bancaria"
+      operationId: createCuentaBancaria
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                dniCliente:
-                  type: string
-                  example: "11111111A"
-                tipoCuenta:
-                  type: string
-                  example: "NORMAL"
-                total:
-                  type: number
-                  format: double
-                  example: 50000.0
-              required:
-                - dniCliente
-                - tipoCuenta
-                - total
+              $ref: '#/components/schemas/CreateCuentaBancariaRequest'
       responses:
         '201':
           description: "Cuenta creada exitosamente"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CuentaBancaria'
-              example:
-                id: 3
-                dniCliente: "11111111A"
-                tipoCuenta: "NORMAL"
-                total: 50000.0
-        '400':
-          description: "Solicitud inválida. Verifique los datos proporcionados."
-        '500':
-          description: "Error interno del servidor"
-  /clientes/{dni}:
-    get:
-      summary: "Obtener cliente por DNI"
-      description: "Devuelve los datos del cliente identificado por DNI, incluyendo sus cuentas bancarias."
-      parameters:
-        - name: dni
-          in: path
-          required: true
-          description: "DNI del cliente"
-          schema:
-            type: string
-            example: "11111111A"
-      responses:
-        '200':
-          description: "Cliente encontrado"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Cliente'
-              example:
-                dni: "11111111A"
-                nombre: "Alberto"
-                apellido1: "Rodríguez"
-                apellido2: "Rodríguez"
-                fechaNacimiento: "1959-09-12"
-                cuentas:
-                  - id: 1
-                    dniCliente: "11111111A"
-                    tipoCuenta: "NORMAL"
-                    total: 50000.0
-        '400':
-          description: "DNI inválido."
-        '404':
-          description: "Cliente no encontrado"
-        '500':
-          description: "Error interno del servidor"
-  /cuentas/{idCuenta}:
+                $ref: '#/components/schemas/CuentaBancariaResponse'
+
+  /cuentas/{id}:
     put:
       summary: "Actualizar el total de una cuenta bancaria"
-      description: "Actualiza el total de dinero de la cuenta identificada por idCuenta."
+      operationId: updateCuentaBancaria
       parameters:
-        - name: idCuenta
+        - name: id
           in: path
           required: true
-          description: "ID de la cuenta bancaria a actualizar"
           schema:
             type: integer
             format: int64
-            example: 1
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                total:
-                  type: number
-                  format: double
-                  example: 60000.0
-              required:
-                - total
+              $ref: '#/components/schemas/UpdateCuentaBancariaRequest'
       responses:
         '200':
           description: "Cuenta actualizada correctamente"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CuentaBancaria'
-              example:
-                id: 1
-                dniCliente: "11111111A"
-                tipoCuenta: "NORMAL"
-                total: 60000.0
-        '400':
-          description: "Solicitud inválida. Verifique los datos proporcionados."
-        '404':
-          description: "Cuenta no encontrada"
-        '500':
-          description: "Error interno del servidor"
+                $ref: '#/components/schemas/CuentaBancariaResponse'
+
 components:
-    schemas:
-        Cliente:
-          type: object
-          properties:
-            dni:
-              type: string
-              example: "11111111A"
-            nombre:
-              type: string
-              example: "Alberto"
-            apellido1:
-              type: string
-              example: "Rodríguez"
-            apellido2:
-              type: string
-              example: "Rodríguez"
-            fechaNacimiento:
-              type: string
-              format: date
-              example: "1959-09-12"
-            cuentas:
-              type: array
-              items:
-                $ref: '#/components/schemas/CuentaBancaria'
-          required:
-            - dni
-            - nombre
-            - apellido1
-            - fechaNacimiento
-        CuentaBancaria:
-          type: object
-          properties:
-            id:
-              type: integer
-              format: int64
-              example: 1
-            dniCliente:
-              type: string
-              example: "11111111A"
-            tipoCuenta:
-              type: string
-              example: "NORMAL"
-            total:
-              type: number
-              format: double
-              example: 50000.0
-          required:
-            - dniCliente
-            - tipoCuenta
-            - total
+  schemas:
+    ClienteResponse:
+      type: object
+      properties:
+        dni:
+          type: string
+        nombre:
+          type: string
+        apellido1:
+          type: string
+        apellido2:
+          type: string
+        fechaNacimiento:
+          type: string
+          format: date
+        cuentas:
+          type: array
+          items:
+            $ref: '#/components/schemas/CuentaBancariaResponse'
+
+    CuentaBancariaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        dniCliente:
+          type: string
+        tipoCuenta:
+          type: string
+          enum:
+            - JUNIOR
+            - NORMAL
+            - PREMIUM
+        total:
+          type: number
+          format: double
+
+    CreateCuentaBancariaRequest:
+      type: object
+      properties:
+        dniCliente:
+          type: string
+        tipoCuenta:
+          type: string
+          enum:
+            - JUNIOR
+            - NORMAL
+            - PREMIUM
+        total:
+          type: number
+          format: double
+      required:
+        - dniCliente
+        - tipoCuenta
+        - total
+
+    UpdateCuentaBancariaRequest:
+      type: object
+      properties:
+        total:
+          type: number
+          format: double
+      required:
+        - total

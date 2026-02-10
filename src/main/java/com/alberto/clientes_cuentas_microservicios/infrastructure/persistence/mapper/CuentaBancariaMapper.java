@@ -5,6 +5,7 @@ import com.alberto.clientes_cuentas_microservicios.domain.model.Dni;
 import com.alberto.clientes_cuentas_microservicios.infrastructure.persistence.entity.CuentaBancariaEntity;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
@@ -18,6 +19,7 @@ public interface CuentaBancariaMapper {
         return value != null ? new Dni(value) : null;
     }
 
+    @Mapping(target = "dniCliente", source = "dniCliente")
     CuentaBancariaEntity toCuentaBancariaEntity(CuentaBancaria cuenta);
 
     @AfterMapping
@@ -27,6 +29,7 @@ public interface CuentaBancariaMapper {
         }
     }
 
+    @Mapping(target = "dniCliente", source = "dniCliente")
     CuentaBancaria toCuentaBancaria(CuentaBancariaEntity entity);
 
     @AfterMapping
@@ -36,6 +39,7 @@ public interface CuentaBancariaMapper {
         }
     }
 }
+
 
 
 
