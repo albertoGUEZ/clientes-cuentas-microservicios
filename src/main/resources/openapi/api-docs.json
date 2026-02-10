@@ -40,7 +40,27 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Cuenta bancaria creada exitosamente",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CuentaBancariaResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cuenta bancaria no encontrada",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CuentaBancariaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de solicitud inválidos",
             "content": {
               "*/*": {
                 "schema": {
@@ -70,7 +90,17 @@
         },
         "responses": {
           "201": {
-            "description": "Created",
+            "description": "Cuenta bancaria creada exitosamente",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CuentaBancariaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de solicitud inválidos",
             "content": {
               "*/*": {
                 "schema": {
@@ -90,7 +120,7 @@
         "operationId": "getClientes",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de clientes obtenida exitosamente",
             "content": {
               "*/*": {
                 "schema": {
@@ -123,7 +153,27 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Cliente encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente no encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "DNI inválido",
             "content": {
               "*/*": {
                 "schema": {
@@ -143,7 +193,7 @@
         "operationId": "getClientesMayoresDeEdad",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de clientes mayores de edad obtenida exitosamente",
             "content": {
               "*/*": {
                 "schema": {
@@ -177,7 +227,20 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de clientes con cuenta superior a la cantidad obtenida exitosamente",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClienteResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Cantidad inválida",
             "content": {
               "*/*": {
                 "schema": {
