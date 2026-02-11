@@ -26,24 +26,17 @@ public class ClienteService implements ClienteQueryUseCase {
 
     @Override
     public List<Cliente> getAllAdults() {
-        return clienteRepository.findAll()
-                .stream()
-                .filter(Cliente::isAdult)
-                .toList();
+        return clienteRepository.findAllAdults();
     }
-
 
     @Override
     public List<Cliente> getAllWithTotalBalanceGreaterThan(double total) {
         if (total < 0) {
             throw new InvalidDomainException("El total no puede ser negativo");
         }
-
-        return clienteRepository.findAll()
-                .stream()
-                .filter(cliente -> cliente.totalBalance() > total)
-                .toList();
+        return clienteRepository.findAllWithTotalBalanceGreaterThan(total);
     }
+
 
 
     @Override

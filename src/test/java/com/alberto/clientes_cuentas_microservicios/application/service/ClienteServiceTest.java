@@ -63,23 +63,19 @@ class ClienteServiceTest {
         Cliente adulto2 = new Cliente(new Dni("22222222B"), "Ana", "López", "Martín", LocalDate.of(1985, 5, 15));
         Cliente menor = new Cliente(new Dni("33333333C"), "Pedro", "Sánchez", "Ruiz", LocalDate.of(2010, 8, 20));
 
-        List<Cliente> allClientes = List.of(adulto1, adulto2, menor);
-        when(clienteRepository.findAll()).thenReturn(allClientes);
+        when(clienteRepository.findAllAdults())
+                .thenReturn(List.of(adulto1, adulto2));
 
         List<Cliente> result = clienteService.getAllAdults();
 
         assertThat(result).hasSize(2);
-        assertThat(result).extracting(cliente -> cliente.getDni().value())
-                .containsExactly("11111111A", "22222222B");
-        assertThat(result).allMatch(Cliente::isAdult);
+        verify(clienteRepository).findAllAdults();
     }
 
     @Test
     void shouldReturnEmptyListWhenNoAdults() {
-        Cliente menor1 = new Cliente(new Dni("11111111A"), "Pedro", "Sánchez", "Ruiz", LocalDate.of(2010, 1, 1));
-        Cliente menor2 = new Cliente(new Dni("22222222B"), "Luis", "García", "Martín", LocalDate.of(2015, 5, 15));
-
-        when(clienteRepository.findAll()).thenReturn(List.of(menor1, menor2));
+        new Cliente(new Dni("11111111A"), "Pedro", "Sánchez", "Ruiz", LocalDate.of(2010, 1, 1));
+        new Cliente(new Dni("22222222B"), "Luis", "García", "Martín", LocalDate.of(2015, 5, 15));
 
         List<Cliente> result = clienteService.getAllAdults();
 
@@ -91,43 +87,35 @@ class ClienteServiceTest {
         Cliente adulto1 = new Cliente(new Dni("11111111A"), "Juan", "Pérez", "García", LocalDate.of(1990, 1, 1));
         Cliente adulto2 = new Cliente(new Dni("22222222B"), "Ana", "López", "Martín", LocalDate.of(1985, 5, 15));
 
-        List<Cliente> allClientes = List.of(adulto1, adulto2);
-        when(clienteRepository.findAll()).thenReturn(allClientes);
+        when(clienteRepository.findAllAdults())
+                .thenReturn(List.of(adulto1, adulto2));
 
         List<Cliente> result = clienteService.getAllAdults();
 
         assertThat(result).hasSize(2);
-        assertThat(result).containsExactlyElementsOf(allClientes);
     }
 
     @Test
     void shouldReturnClientesWithTotalBalanceGreaterThan() {
-        Cliente clienteRico = new Cliente(new Dni("11111111A"), "Juan", "Pérez", "García", LocalDate.of(1990, 1, 1));
-        Cliente clientePobre = new Cliente(new Dni("22222222B"), "Ana", "López", "Martín", LocalDate.of(1985, 5, 15));
+        Cliente cliente1 = new Cliente(new Dni("11111111A"), "Juan", "Pérez", "García", LocalDate.of(1990, 1, 1));
+        Cliente cliente2 = new Cliente(new Dni("22222222B"), "Ana", "López", "Martín", LocalDate.of(1985, 5, 15));
 
-        CuentaBancaria cuentaRica = new CuentaBancaria(new Dni("11111111A"), TipoCuenta.NORMAL, 1500.0);
-        CuentaBancaria cuentaPobre = new CuentaBancaria(new Dni("22222222B"), TipoCuenta.NORMAL, 500.0);
+        CuentaBancaria cuenta1 = new CuentaBancaria(new Dni("11111111A"), TipoCuenta.NORMAL, 1500.0);
+        CuentaBancaria cuenta2 = new CuentaBancaria(new Dni("22222222B"), TipoCuenta.NORMAL, 500.0);
 
-        clienteRico.addCuentaBancaria(cuentaRica);
-        clientePobre.addCuentaBancaria(cuentaPobre);
+        when(clienteRepository.findAllWithTotalBalanceGreaterThan(10000))
+                .thenReturn(List.of(cliente1));
 
-        List<Cliente> allClientes = List.of(clienteRico, clientePobre);
-        when(clienteRepository.findAll()).thenReturn(allClientes);
-
-        List<Cliente> result = clienteService.getAllWithTotalBalanceGreaterThan(1000.0);
+        List<Cliente> result = clienteService.getAllWithTotalBalanceGreaterThan(10000);
 
         assertThat(result).hasSize(1);
-        assertThat(result.getFirst().getDni().value()).isEqualTo("11111111A");
-        assertThat(result).allMatch(cliente -> cliente.totalBalance() > 1000.0);
+        verify(clienteRepository).findAllWithTotalBalanceGreaterThan(10000);
     }
 
     @Test
     void shouldReturnEmptyListWhenNoClientesMeetBalanceThreshold() {
-        Cliente cliente1 = new Cliente(new Dni("11111111A"), "Juan", "Pérez", "García", LocalDate.of(1990, 1, 1));
-        Cliente cliente2 = new Cliente(new Dni("22222222B"), "Ana", "López", "Martín", LocalDate.of(1985, 5, 15));
-
-        List<Cliente> allClientes = List.of(cliente1, cliente2);
-        when(clienteRepository.findAll()).thenReturn(allClientes);
+        new Cliente(new Dni("11111111A"), "Juan", "Pérez", "García", LocalDate.of(1990, 1, 1));
+        new Cliente(new Dni("22222222B"), "Ana", "López", "Martín", LocalDate.of(1985, 5, 15));
 
         List<Cliente> result = clienteService.getAllWithTotalBalanceGreaterThan(10000.0);
 
@@ -149,16 +137,13 @@ class ClienteServiceTest {
         CuentaBancaria cuenta1 = new CuentaBancaria(new Dni("11111111A"), TipoCuenta.NORMAL, 100.0);
         CuentaBancaria cuenta2 = new CuentaBancaria(new Dni("22222222B"), TipoCuenta.NORMAL, 200.0);
 
-        cliente1.addCuentaBancaria(cuenta1);
-        cliente2.addCuentaBancaria(cuenta2);
 
-        List<Cliente> allClientes = List.of(cliente1, cliente2);
-        when(clienteRepository.findAll()).thenReturn(allClientes);
+        when(clienteRepository.findAllWithTotalBalanceGreaterThan(10000))
+                .thenReturn(List.of(cliente1, cliente2));
 
-        List<Cliente> result = clienteService.getAllWithTotalBalanceGreaterThan(0.0);
+        List<Cliente> result = clienteService.getAllWithTotalBalanceGreaterThan(10000);
 
         assertThat(result).hasSize(2);
-        assertThat(result).containsExactlyElementsOf(allClientes);
     }
 
     @Test

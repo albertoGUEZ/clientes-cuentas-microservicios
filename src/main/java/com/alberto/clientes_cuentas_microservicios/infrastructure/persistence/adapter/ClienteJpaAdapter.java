@@ -42,6 +42,21 @@ public class ClienteJpaAdapter implements ClienteRepositoryPort {
     }
 
     @Override
+    public List<Cliente> findAllAdults() {
+        return clienteRepository.findAllAdults().stream()
+                .map(this::mapToClienteWithCuentas)
+                .toList();
+    }
+
+    @Override
+    public List<Cliente> findAllWithTotalBalanceGreaterThan(double total) {
+        return clienteRepository.findAllWithTotalBalanceGreaterThan(total).stream()
+                .map(this::mapToClienteWithCuentas)
+                .toList();
+    }
+
+
+    @Override
     public Optional<Cliente> findByDni(Dni dni) {
         return clienteRepository.findById(dni.value())
                 .map(this::mapToClienteWithCuentas);
